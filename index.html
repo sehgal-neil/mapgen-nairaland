@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MAPGEN — Gender Norms in Nigeria: Data Explorer</title>
+  <meta name="description" content="Public data explorer for the MAPGEN project. Browse 38 coarse themes and 740 norm clusters extracted from 4 million Nairaland posts, scored for restrictiveness and burden by gender.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+<!-- ── Nav ────────────────────────────────────────────────── -->
+<nav class="nav" role="navigation">
+  <div class="nav-inner">
+    <a href="#hero" class="nav-brand">MAP<span>GEN</span></a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#findings">Findings</a></li>
+      <li><a href="#explorer">Data Explorer</a></li>
+      <li><a href="#downloads">Downloads</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+        <line x1="2" y1="5" x2="18" y2="5"/><line x1="2" y1="10" x2="18" y2="10"/><line x1="2" y1="15" x2="18" y2="15"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- ── Hero ───────────────────────────────────────────────── -->
+<section id="hero" class="hero">
+  <img src="img/dotplot.png" alt="" class="hero-bg" aria-hidden="true">
+  <div class="container">
+    <div class="hero-content">
+      <span class="hero-eyebrow">MAPGEN &mdash; Public Data Release</span>
+      <h1>What Four Million Forum Posts Tell Us About Gender Norms in Nigeria</h1>
+      <p class="hero-sub">
+        Using large language models, we extracted and scored 31,456 gender norm beliefs from Nairaland — Africa's largest online forum. The data are freely available for researchers and practitioners working on gender in Nigeria and West Africa.
+      </p>
+
+      <div class="hero-stats" role="list" aria-label="Project statistics">
+        <div class="stat-cell" role="listitem">
+          <span class="stat-num" data-count="4000000" data-suffix="M" data-divisor="1000000">0</span>
+          <span class="stat-label">Posts analyzed</span>
+        </div>
+        <div class="stat-cell" role="listitem">
+          <span class="stat-num" data-count="146000" data-suffix="K" data-divisor="1000">0</span>
+          <span class="stat-label">Posts with norms</span>
+        </div>
+        <div class="stat-cell" role="listitem">
+          <span class="stat-num" data-count="31456" data-suffix="">0</span>
+          <span class="stat-label">Unique beliefs</span>
+        </div>
+        <div class="stat-cell" role="listitem">
+          <span class="stat-num" data-count="740" data-suffix="">0</span>
+          <span class="stat-label">Fine-grained clusters</span>
+        </div>
+        <div class="stat-cell" role="listitem">
+          <span class="stat-num" data-count="38" data-suffix="">0</span>
+          <span class="stat-label">Coarse themes</span>
+        </div>
+        <div class="stat-cell" role="listitem">
+          <span class="stat-num" data-count="200" data-prefix="<$" data-suffix="">0</span>
+          <span class="stat-label">Analysis cost (USD)</span>
+        </div>
+      </div>
+
+      <div class="hero-ctas">
+        <a href="https://blogs.worldbank.org/en/developmenttalk" class="btn btn-primary" target="_blank" rel="noopener">
+          Read the Blog Post
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 7h10M8 3l4 4-4 4"/></svg>
+        </a>
+        <a href="#explorer" class="btn btn-secondary">
+          Explore the Data
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 2v10M3 8l4 4 4-4"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── About ──────────────────────────────────────────────── -->
+<section id="about" class="section">
+  <div class="container">
+    <div class="section-header">
+      <p class="section-label-tag">Methodology</p>
+      <h2>How we measured gender norms at scale</h2>
+      <p class="section-desc">Traditional survey and ethnographic methods capture norms in structured, often socially desirable contexts. This project uses naturalistic online discourse to surface what people actually say and believe.</p>
+    </div>
+
+    <div class="method-grid">
+      <div class="method-card">
+        <div class="method-icon">&#x1F4E1;</div>
+        <h3>Data collection</h3>
+        <p>We collected approximately 4 million posts from Nairaland — Africa's largest online forum, founded in 2005 with 3M+ registered members. Posts span 7 years of discussion across dozens of topic boards. Dictionary-based filtering and GPT-4o-mini norm detection narrowed the corpus to 146,000 posts containing explicit gender norm statements.</p>
+      </div>
+      <div class="method-card">
+        <div class="method-icon">&#x1F9E0;</div>
+        <h3>LLM annotation</h3>
+        <p>GPT-4o annotated each norm-containing post to extract the underlying belief, identify the social actor, and score two dimensions: <strong>restrictiveness</strong> (how much the norm limits decision-making freedom, 1–5) and <strong>burden</strong> (severity of sanctions for non-compliance, 1–5). Norms were also classified as injunctive (prescriptive) or descriptive. Three Nigerian annotators independently validated a 50-post sample, yielding 96–100% agreement.</p>
+      </div>
+      <div class="method-card">
+        <div class="method-icon">&#x1F5C2;&#xFE0F;</div>
+        <h3>Clustering &amp; themes</h3>
+        <p>Sentence-BERT embeddings were computed for all 31,456 beliefs, then grouped using agglomerative clustering (cosine similarity threshold 0.5). This produced 740 fine-grained norm clusters, which were manually consolidated into 38 coarse thematic groups. All scores were computed separately for women and men to enable direct gender comparisons.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Findings ────────────────────────────────────────────── -->
+<section id="findings" class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <p class="section-label-tag">Key findings</p>
+      <h2>A striking asymmetry — in every single domain</h2>
+      <p class="section-desc">Across all 38 coarse norm themes, norms are more restrictive for women than for men. The gap is not evenly distributed: appearance, domestic, and religious norms show the largest differences.</p>
+    </div>
+
+    <div class="findings-pills" role="list">
+      <div class="pill" role="listitem">
+        <span class="pill-num">3.12 vs 2.68</span>
+        <span class="pill-text">Average restrictiveness — women vs. men (all themes)</span>
+      </div>
+      <div class="pill" role="listitem">
+        <span class="pill-num">2.42 vs 2.07</span>
+        <span class="pill-text">Average burden score — women vs. men</span>
+      </div>
+      <div class="pill" role="listitem">
+        <span class="pill-num">84.6%</span>
+        <span class="pill-text">Women's norms classified as injunctive (vs. 72.6% for men)</span>
+      </div>
+      <div class="pill" role="listitem">
+        <span class="pill-num">58%</span>
+        <span class="pill-text">Of clusters constrain women more (vs. 13% constraining men more)</span>
+      </div>
+    </div>
+
+    <!-- Viz 1 -->
+    <div class="viz-block">
+      <p class="viz-label">Figure 1 &mdash; Diverging dot plot</p>
+      <div class="viz-frame-wrap">
+        <iframe
+          id="frame-dot"
+          src="viz/diverging-dot.html"
+          class="viz-frame"
+          scrolling="no"
+          title="Diverging dot chart: gender gap in norm restrictiveness by domain"
+          loading="lazy">
+        </iframe>
+      </div>
+    </div>
+
+    <!-- Viz 2 -->
+    <div class="viz-block">
+      <p class="viz-label">Figure 2 &mdash; Restrictiveness &amp; burden scores</p>
+      <div class="viz-frame-wrap">
+        <iframe
+          id="frame-bar"
+          src="viz/grouped-bar.html"
+          class="viz-frame"
+          scrolling="no"
+          title="Grouped bar chart: restrictiveness and burden scores across most-discussed norm domains"
+          loading="lazy">
+        </iframe>
+      </div>
+    </div>
+
+    <!-- Viz 3 -->
+    <div class="viz-block">
+      <p class="viz-label">Figure 3 &mdash; Bubble chart</p>
+      <div class="viz-frame-wrap">
+        <iframe
+          id="frame-bubble"
+          src="viz/bubble-scatter.html"
+          class="viz-frame"
+          scrolling="no"
+          title="Bubble chart: norm domains by gender gap in restrictiveness and burden"
+          loading="lazy"
+          style="min-height:560px;">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Explorer ───────────────────────────────────────────── -->
+<section id="explorer" class="section">
+  <div class="container">
+    <div class="section-header">
+      <p class="section-label-tag">Data explorer</p>
+      <h2>Browse all norm themes and clusters</h2>
+      <p class="section-desc">Search, sort, and filter the full dataset. Click any row to see sample beliefs and example forum posts. All data are available for download below.</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar" role="tablist">
+      <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="tab-coarse" id="btn-coarse" data-tab="coarse">38 Coarse Themes</button>
+      <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-fine" id="btn-fine" data-tab="fine">740 Fine Clusters</button>
+    </div>
+
+    <!-- Coarse panel -->
+    <div id="tab-coarse" class="tab-panel active" role="tabpanel" aria-labelledby="btn-coarse">
+      <div class="table-controls">
+        <div class="search-box">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="6" r="4"/><path d="M10 10l2.5 2.5"/></svg>
+          <input type="search" class="search-input" id="coarse-search" placeholder="Search themes or beliefs…" aria-label="Search coarse themes">
+        </div>
+        <div class="filter-pills" role="group" aria-label="Filter coarse themes">
+          <button class="filter-pill active" data-filter="all">All</button>
+          <button class="filter-pill" data-filter="women_high">Women constrained more (gap &gt; 0.5)</button>
+          <button class="filter-pill" data-filter="large">Large gap (&gt; 1.0)</button>
+          <button class="filter-pill" data-filter="men">Men constrained more</button>
+        </div>
+        <span class="result-count" id="coarse-count"></span>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table" id="coarse-table" aria-label="Coarse norm themes">
+          <thead>
+            <tr>
+              <th data-sort="label">Theme <span class="sort-caret">↕</span></th>
+              <th data-sort="n" class="sorted">N <span class="sort-caret">↓</span></th>
+              <th data-sort="r_w" class="hide-mobile">R Women <span class="sort-caret">↕</span></th>
+              <th data-sort="r_m" class="hide-mobile">R Men <span class="sort-caret">↕</span></th>
+              <th data-sort="r_diff">R Gap <span class="sort-caret">↕</span></th>
+              <th data-sort="b_diff" class="hide-mobile">B Gap <span class="sort-caret">↕</span></th>
+              <th class="hide-mobile">Sample belief</th>
+            </tr>
+          </thead>
+          <tbody id="coarse-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Fine panel -->
+    <div id="tab-fine" class="tab-panel" role="tabpanel" aria-labelledby="btn-fine">
+      <div id="fine-loading" style="padding:48px;text-align:center;color:var(--color-text-tertiary);font-size:14px;">
+        Loading 740 clusters…
+      </div>
+      <div id="fine-controls" style="display:none;">
+        <div class="table-controls">
+          <div class="search-box">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="6" r="4"/><path d="M10 10l2.5 2.5"/></svg>
+            <input type="search" class="search-input" id="fine-search" placeholder="Search clusters or beliefs…" aria-label="Search fine clusters">
+          </div>
+          <div class="filter-pills" role="group" aria-label="Filter fine clusters">
+            <button class="filter-pill active" data-filter="all">All</button>
+            <button class="filter-pill" data-filter="women_high">Women constrained (gap &gt; 0.5)</button>
+            <button class="filter-pill" data-filter="large">Large gap (&gt; 1.0)</button>
+            <button class="filter-pill" data-filter="men">Men constrained</button>
+          </div>
+          <span class="result-count" id="fine-count"></span>
+        </div>
+        <div class="topic-filters" id="topic-filters" role="group" aria-label="Filter by topic"></div>
+        <div class="table-wrap">
+          <table class="data-table" id="fine-table" aria-label="Fine-grained norm clusters">
+            <thead>
+              <tr>
+                <th data-sort="name">Cluster <span class="sort-caret">↕</span></th>
+                <th data-sort="n" class="sorted">N <span class="sort-caret">↓</span></th>
+                <th data-sort="r_diff">R Gap <span class="sort-caret">↕</span></th>
+                <th data-sort="b_diff" class="hide-mobile">B Gap <span class="sort-caret">↕</span></th>
+                <th class="hide-mobile">Forum topic</th>
+                <th class="hide-mobile">Norm type (W)</th>
+              </tr>
+            </thead>
+            <tbody id="fine-tbody"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="fine-pagination"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Downloads ──────────────────────────────────────────── -->
+<section id="downloads" class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <p class="section-label-tag">Data &amp; resources</p>
+      <h2>Download the full dataset</h2>
+      <p class="section-desc">All data are released freely for research and non-commercial use. If you use this dataset, please cite the MAPGEN project and the UPenn Computational Social Listening Lab.</p>
+    </div>
+
+    <div class="download-grid">
+      <a href="data/nairaland-coarse-themes.xlsx" download class="download-card">
+        <div class="download-icon">&#x1F4CA;</div>
+        <div>
+          <h3>Coarse Theme Summary</h3>
+          <p>38 coarse norm themes with restrictiveness and burden scores, top beliefs, and example posts. Best for high-level analysis.</p>
+        </div>
+      </a>
+      <a href="data/nairaland-all-clusters.xlsx" download class="download-card">
+        <div class="download-icon">&#x1F4C1;</div>
+        <div>
+          <h3>All 740 Norm Clusters</h3>
+          <p>Complete fine-grained cluster dataset with scores, norm type classification, topic labels, and sample beliefs for all 740 clusters.</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="links-row">
+      <a href="https://blogs.worldbank.org/en/developmenttalk" class="text-link" target="_blank" rel="noopener">
+        World Bank Let's Talk Development Blog
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 10L10 2M4 2h6v6"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ─────────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <p class="footer-text">
+        &copy; 2025 MAPGEN / UPenn Computational Social Listening Lab &mdash; Data released for public research use.
+      </p>
+      <div class="footer-badges">
+        <span class="footer-badge">UPenn CSSL</span>
+        <span class="footer-badge">World Bank</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- JS -->
+<script src="js/coarse-data.js"></script>
+<script src="js/tables.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

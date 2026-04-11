@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --color-text-primary: #1a1a18;
+      --color-text-secondary: #5f5e5a;
+      --color-text-tertiary: #888780;
+      --color-border-tertiary: #e0ddd4;
+    }
+    html, body { margin: 0; padding: 0 16px 16px; background: transparent; overflow-x: hidden; box-sizing: border-box; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    body { margin: 0; }
+    .chart-wrap { padding: 1rem 0 0.5rem; font-family: var(--font-sans, sans-serif); }
+    .chart-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 4px 0; }
+    .chart-subtitle { font-size: 13px; color: var(--color-text-secondary); margin: 0 0 20px 0; }
+    .legend { display: flex; gap: 20px; margin: 0 0 18px 160px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-text-secondary); }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .row { display: flex; align-items: center; margin-bottom: 10px; }
+    .label { width: 158px; font-size: 12px; color: var(--color-text-secondary); text-align: right; padding-right: 10px; flex-shrink: 0; line-height: 1.3; }
+    .bar-area { flex: 1; position: relative; height: 20px; }
+    .center-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--color-border-tertiary); }
+    .dot { position: absolute; top: 50%; width: 10px; height: 10px; border-radius: 50%; transform: translate(-50%, -50%); }
+    .connector { position: absolute; top: 50%; height: 2px; transform: translateY(-50%); }
+    .axis-labels { display: flex; margin-left: 158px; font-size: 11px; color: var(--color-text-tertiary, var(--color-text-secondary)); margin-bottom: 6px; }
+    .divider { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 14px 0 14px 158px; }
+    .section-label { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary, var(--color-text-secondary)); margin: 0 0 8px 158px; letter-spacing: 0.03em; text-transform: uppercase; }
+    .note { font-size: 11px; color: var(--color-text-secondary); margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+<h2 class="sr-only">Diverging dot chart showing the gender gap in restrictiveness scores across norm domains on Nairaland. Most domains constrain women more than men, with appearance and religious norms showing the largest gaps.</h2>
+
+<div class="chart-wrap">
+  <p class="chart-title">Gender gap in norm restrictiveness, by domain</p>
+  <p class="chart-subtitle">Average restrictiveness scores for women vs. men (1–5 scale) across norm domains on Nairaland. Dot position shows each group's score; gap shows the difference.</p>
+
+  <div class="legend">
+    <span class="legend-item"><span class="legend-dot" style="background:#C1607A;"></span>Women's score</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#3D8EBD;"></span>Men's score</span>
+  </div>
+
+  <div class="axis-labels" id="axis-labels"></div>
+  <div id="chart-rows"></div>
+  <p class="note">Source: MAPGEN / UPenn Computational Social Listening Lab analysis of ~4 million Nairaland posts. Scores are averages across norm clusters within each domain.</p>
+</div>
+
+<script>
+const domains = [
+  { label: "Hijab", w: 3.87, m: 1.56, group: "appearance" },
+  { label: "Makeup & beauty", w: 3.78, m: 1.36, group: "appearance" },
+  { label: "Modesty in dress", w: 3.26, m: 2.40, group: "appearance" },
+  { label: "Women's attire", w: 3.14, m: 2.17, group: "appearance" },
+  { label: "Islam & gender", w: 3.78, m: 2.93, group: "religion" },
+  { label: "Religion in marriage", w: 3.00, m: 2.77, group: "religion" },
+  { label: "Breastfeeding", w: 3.34, m: 1.70, group: "sexuality" },
+  { label: "Premarital sex", w: 3.23, m: 2.72, group: "sexuality" },
+  { label: "Virginity", w: 3.53, m: 2.00, group: "sexuality" },
+  { label: "Women in family", w: 3.27, m: 2.17, group: "domestic" },
+  { label: "Cooking & domestic roles", w: 3.15, m: 1.73, group: "domestic" },
+  { label: "Marriage goal", w: 3.09, m: 2.68, group: "domestic" },
+  { label: "Expectations of masculinity", w: 2.50, m: 3.56, group: "men" },
+  { label: "Role of fathers", w: 2.60, m: 3.56, group: "men" },
+];
+
+domains.sort((a, b) => {
+  const groups = ["appearance","religion","sexuality","domestic","men"];
+  if (a.group !== b.group) return groups.indexOf(a.group) - groups.indexOf(b.group);
+  return (b.w - b.m) - (a.w - a.m);
+});
+
+const minScore = 1.0;
+const maxScore = 4.2;
+const range = maxScore - minScore;
+
+function pct(val) {
+  return ((val - minScore) / range) * 100 + "%";
+}
+
+const groupLabels = {
+  appearance: "Bodily appearance",
+  religion: "Religion & gender",
+  sexuality: "Sexuality & reproduction",
+  domestic: "Domestic roles & marriage",
+  men: "Norms constraining men more"
+};
+
+const container = document.getElementById("chart-rows");
+let lastGroup = null;
+
+domains.forEach(d => {
+  if (d.group !== lastGroup) {
+    if (lastGroup !== null) {
+      const div = document.createElement("div");
+      div.className = "divider";
+      container.appendChild(div);
+    }
+    const lbl = document.createElement("div");
+    lbl.className = "section-label";
+    lbl.textContent = groupLabels[d.group];
+    container.appendChild(lbl);
+    lastGroup = d.group;
+  }
+
+  const row = document.createElement("div");
+  row.className = "row";
+
+  const label = document.createElement("div");
+  label.className = "label";
+  label.textContent = d.label;
+
+  const barArea = document.createElement("div");
+  barArea.className = "bar-area";
+
+  const centerLine = document.createElement("div");
+  centerLine.className = "center-line";
+  barArea.appendChild(centerLine);
+
+  const left = Math.min(d.w, d.m);
+  const right = Math.max(d.w, d.m);
+  const connector = document.createElement("div");
+  connector.className = "connector";
+  connector.style.left = pct(left);
+  connector.style.width = "calc(" + pct(right) + " - " + pct(left) + ")";
+  connector.style.background = d.w > d.m ? "rgba(193,96,122,0.25)" : "rgba(61,142,189,0.25)";
+  barArea.appendChild(connector);
+
+  const wDot = document.createElement("div");
+  wDot.className = "dot";
+  wDot.style.left = pct(d.w);
+  wDot.style.background = "#C1607A";
+  wDot.title = "Women: " + d.w.toFixed(2);
+  barArea.appendChild(wDot);
+
+  const mDot = document.createElement("div");
+  mDot.className = "dot";
+  mDot.style.left = pct(d.m);
+  mDot.style.background = "#3D8EBD";
+  mDot.title = "Men: " + d.m.toFixed(2);
+  barArea.appendChild(mDot);
+
+  row.appendChild(label);
+  row.appendChild(barArea);
+  container.appendChild(row);
+});
+
+const axisContainer = document.getElementById("axis-labels");
+axisContainer.style.justifyContent = "space-between";
+[1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0].forEach(v => {
+  const lbl = document.createElement("span");
+  lbl.textContent = v.toFixed(1);
+  axisContainer.appendChild(lbl);
+});
+
+// Auto-size iframe
+const sendHeight = () => window.parent.postMessage({ iframeHeight: document.body.scrollHeight + 24 }, '*');
+window.addEventListener('load', sendHeight);
+window.addEventListener('resize', sendHeight);
+</script>
+</body>
+</html>
