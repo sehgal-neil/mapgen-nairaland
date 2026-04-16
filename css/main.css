@@ -76,14 +76,26 @@ h1,h2,h3,h4 { margin: 0; font-weight: 600; line-height: 1.25; }
   padding: 0 24px;
 }
 .nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.nav-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: block;
+  flex-shrink: 0;
+}
+.nav-brand-text {
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  text-decoration: none;
   color: var(--color-text-primary);
 }
-.nav-brand span { color: var(--color-women); }
+.nav-brand-text span { color: var(--color-women); }
 .nav-links {
   display: flex;
   gap: 28px;
